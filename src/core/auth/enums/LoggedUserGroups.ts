@@ -1,5 +1,6 @@
-enum LoggedUserGroups {
-    visitor = 0,
-    user = 1,
-    admin =2,
+export enum LoggedUserGroups {
+  block = 'block',
+  guest = 'guest',
+  normal = 'normal',
+  admin = 'admin',
 }

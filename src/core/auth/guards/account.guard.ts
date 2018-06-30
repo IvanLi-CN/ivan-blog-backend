@@ -13,7 +13,7 @@ export class AccountGuard implements CanActivate {
   }
 
   /**
-   * Checks if the current user role exists within the specified role set
+   * Checks if the current users role exists within the specified role set
    * @param {ExecutionContext} context
    * @returns {boolean}
    */
@@ -25,7 +25,7 @@ export class AccountGuard implements CanActivate {
     }
     return roles.some(
       (role: number) => request[LoggedUserGroups[role]]
-      // The role name is the attribute name in the request object and the user information is the attribute value
+      // The role name is the attribute name in the request object and the users information is the attribute value
     );
   }
 }
