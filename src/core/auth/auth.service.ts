@@ -1,6 +1,9 @@
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
-import { JwtPrivateKeyToken, JwtPublicKeyToken } from './auth.providers';
+import {Inject, Injectable, UnauthorizedException} from '@nestjs/common';
+import {JwtPrivateKeyToken, JwtPublicKeyToken} from './auth.providers';
 import * as JWT from 'jsonwebtoken';
+import {LoggedAdminDto} from "./dtos/logged-admin.dto";
+import {LoggedUserGroups} from "./enums/LoggedUserGroups";
+import {LoggedUserDto} from "./dtos/logged-user.dto";
 
 @Injectable()
 export class AuthService {
@@ -17,7 +20,7 @@ export class AuthService {
 
   sign4User({ nickName, id }: LoggedUserDto) {
     return JWT.sign(
-      { name, id, group: LoggedUserGroups.user },
+      { name, id, group: LoggedUserGroups.normal },
       this.privateKey,
       { expiresIn: '15m' },
     );
@@ -28,6 +31,14 @@ export class AuthService {
       { name, id, group: LoggedUserGroups.admin },
       this.privateKey,
       { expiresIn: '15m' },
+    );
+  }
+
+  signRefreshToken({ id }: LoggedUserDto | LoggedAdminDto) {
+    return JWT.sign(
+      { id },
+      this.privateKey,
+      { expiresIn: '7d' },
     );
   }
 

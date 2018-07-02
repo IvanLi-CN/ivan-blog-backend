@@ -1,6 +1,6 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import {Test, TestingModule} from '@nestjs/testing';
+import {AppController} from './app.controller';
+import {AppService} from './app.service';
 
 describe('AppController', () => {
   let app: TestingModule;
@@ -13,9 +13,9 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return "Hello World!"', () => {
+    it('should return "Welcome to Ivan\'Blog! ( https://ivanli.cc/ )"', () => {
       const appController = app.get<AppController>(AppController);
-      expect(appController.root()).toBe('Hello World!');
+      expect(appController.root()).toBe('Welcome to Ivan\'Blog! ( https://ivanli.cc/ )');
     });
   });
 });

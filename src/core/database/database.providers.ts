@@ -1,4 +1,4 @@
-import { createConnection } from 'typeorm';
+import {createConnection} from 'typeorm';
 import * as fs from 'fs';
 import * as redis from 'redis';
 
@@ -30,9 +30,9 @@ export const databaseProviders = [
 function getOrmConfig() {
   let filePath: string;
   switch (process.env.NODE_ENV) {
-    // case 'test':
-    //   filePath = 'ormconfig.test.json';
-    //   break;
+    case 'test':
+      filePath = 'ormconfig.test.json';
+      break;
     // case 'dev':
     //   filePath = 'ormconfig.dev.json';
     //   break;

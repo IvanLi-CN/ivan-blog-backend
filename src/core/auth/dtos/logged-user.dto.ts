@@ -1,7 +1,7 @@
-class LoggedUserDto {
-    nickName: string;
+import {LoggedUserGroups} from "../enums/LoggedUserGroups";
+
+export class LoggedUserDto {
+    email: string;
     id: number;
     group: LoggedUserGroups;
-    accessToken: string;
-    refreshToken: string;
 }

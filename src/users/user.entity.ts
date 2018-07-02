@@ -5,13 +5,6 @@ import {LoggedUserGroups} from "../core/auth/enums/LoggedUserGroups";
 
 @Entity()
 export class User{
-  get group(): string {
-    return this._group;
-  }
-
-  set group(value: string) {
-    this._group = value;
-  }
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -36,7 +29,8 @@ export class User{
   @OneToMany(() => Comment, comment => comment.author)
   comments: Comment[];
 
-  @Column({type: 'enum', enum: LoggedUserGroups, default: LoggedUserGroups.normal}) private _group: string;
+  @Column({type: 'enum', enum: LoggedUserGroups, default: LoggedUserGroups.normal})
+  group: LoggedUserGroups;
 
   @CreateDateColumn({select: false })
   createdAt: Date;
