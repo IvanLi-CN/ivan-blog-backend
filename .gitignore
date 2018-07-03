@@ -3,3 +3,4 @@
 node_modules
 ormconfig.json
 yarn.lock
+config.json

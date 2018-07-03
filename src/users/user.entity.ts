@@ -29,7 +29,7 @@ export class User{
   @OneToMany(() => Comment, comment => comment.author)
   comments: Comment[];
 
-  @Column({type: 'enum', enum: LoggedUserGroups, default: LoggedUserGroups.normal})
+  @Column({type: 'enum', enum: LoggedUserGroups, default: LoggedUserGroups.member})
   group: LoggedUserGroups;
 
   @CreateDateColumn({select: false })
