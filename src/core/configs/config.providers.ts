@@ -1,6 +1,6 @@
-import { ConfigsInterface } from './configs.interface';
-import { ReplaySubject } from 'rxjs';
-import { Observable } from 'rxjs';
+import {ConfigsInterface} from './configs.interface';
+import {Observable, ReplaySubject} from 'rxjs';
+import * as fs from 'fs';
 
 export const Configs$Token = 'Config$Token';
 export const ConfigSubjectToken = 'ConfigSubjectToken';
@@ -28,9 +28,19 @@ export const ConfigProviders = [
   },
   {
     provide: BaseConfigsToken,
-    useValue: {
-      appid: 'wx33daeafb99fad240',
-      appsecret: 'f71a9d2e21860108840f20a7cea1f792',
-    },
+    useFactory: async () => {
+      return new Promise((resolve, reject) => {
+        try {
+          fs.readFile('config.json', 'utf-8', (err, data) => {
+            if(err) {
+              return reject(err);
+            }
+            resolve(JSON.parse(data));
+          });
+        } catch (e) {
+          reject(new Error('can not load config.json!'));
+        }
+      })
+    }
   },
 ];

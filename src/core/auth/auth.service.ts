@@ -18,17 +18,17 @@ export class AuthService {
     return JWT.verify(token, this.publicKey) as any;
   }
 
-  sign4User({ nickName, id }: LoggedUserDto) {
+  sign4User({ email, id }: LoggedUserDto) {
     return JWT.sign(
-      { name, id, group: LoggedUserGroups.normal },
+      { email, id, group: LoggedUserGroups.member },
       this.privateKey,
       { expiresIn: '15m' },
     );
   }
 
-  sign4Admin({ nickName, id }: LoggedAdminDto) {
+  sign4Admin({ email, id }: LoggedAdminDto) {
     return JWT.sign(
-      { name, id, group: LoggedUserGroups.admin },
+      { email, id, group: LoggedUserGroups.admin },
       this.privateKey,
       { expiresIn: '15m' },
     );
