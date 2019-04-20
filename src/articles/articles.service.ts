@@ -59,7 +59,7 @@ export class ArticlesService {
     if (input.mdContent && !input.htmlContent) {
       input.htmlContent = this.markdownService.prase(input.mdContent);
     }
-    await repository.update(id, input);
+    await repository.update(id, {...input});
     return await repository.findOne(id);
   }
 

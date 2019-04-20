@@ -7,6 +7,7 @@ import { ArticlesService } from './articles/articles.service';
 import { ArticlesModule } from './articles/articles.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CommonModule } from './common/common.module';
+import { TagsModule } from './tags/tags.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { CommonModule } from './common/common.module';
     TypeOrmModule.forRoot(),
     ArticlesModule,
     CommonModule,
+    TagsModule,
   ],
   controllers: [AppController],
   providers: [AppService, ArticlesResolver, ArticlesService],
