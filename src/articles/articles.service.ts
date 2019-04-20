@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { Article } from './article.entity';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository, Transaction, TransactionManager } from 'typeorm';
 import { ArticlesArgs } from './dtos/articles.args';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateArticleInput } from './dtos/create-article.input';
@@ -30,35 +30,48 @@ export class ArticlesService {
     return isReturnCount ? qb.getCount() : qb.getMany();
   }
 
-  async create(input: CreateArticleInput) {
+  @Transaction()
+  async create(input: CreateArticleInput, @TransactionManager() manager?: EntityManager) {
+    const repository = manager.getRepository(Article);
+    const old = await repository.findOne({title: input.title});
+    if (old) {
+      throw new ConflictException(`文章标题「${input.title}」重复`);
+    }
     if (!input.publishedAt) {
       input.publishedAt = new Date();
     }
     if (!input.htmlContent) {
       input.htmlContent = this.markdownService.prase(input.mdContent);
     }
-    return this.articleRepository.save(this.articleRepository.create(input));
+    return await repository.save(this.articleRepository.create(input));
   }
 
-  async update(id: number, input: UpdateArticleInput) {
+  @Transaction()
+  async update(id: number, input: UpdateArticleInput, @TransactionManager() manager?: EntityManager) {
+    const repository = manager.getRepository(Article);
+    const old = await repository.findOne({title: input.title});
+    if (old && old.id !== id) {
+      throw new ConflictException(`文章标题「${input.title}」重复`);
+    }
     if (!input.publishedAt) {
       input.publishedAt = new Date();
     }
     if (input.mdContent && !input.htmlContent) {
       input.htmlContent = this.markdownService.prase(input.mdContent);
     }
-    this.articleRepository.update(id, input);
+    await repository.update(id, input);
+    return await repository.findOne(id);
   }
 
   async remove(id: number) {
-    this.articleRepository.update(id, {isDel: true});
+    await this.articleRepository.update(id, {isDel: true});
   }
 
   async findOne(id: number) {
-    return this.articleRepository.findOne(id);
+    return await this.articleRepository.findOne(id);
   }
 
-  async titleIsAvailable(title: string) {
-    return !await this.articleRepository.findOne({title, isDel: false});
+  async findOneByTitle(title: string) {
+    return await this.articleRepository.findOne({title, isDel: false});
   }
 }

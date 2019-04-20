@@ -5,18 +5,37 @@ import { ArticlesArgs } from './dtos/articles.args';
 import { Int } from 'type-graphql';
 import { CreateArticleInput } from './dtos/create-article.input';
 import { UpdateArticleInput } from './dtos/update-article.input';
-import { ConflictException } from '@nestjs/common';
+import { NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 
 @Resolver(of => Article)
 export class ArticlesResolver {
-
   constructor(
     private articlesService: ArticlesService,
   ) { }
 
   @Query(returns => [Article])
-  async articles(@Args() args: ArticlesArgs): Promise<Article[]> {
+  async getArticles(@Args() args: ArticlesArgs): Promise<Article[]> {
     return await this.articlesService.findAll(args) as Article[];
+  }
+
+  @Query(returns => Article)
+  async getArticle(
+    @Args({name: 'id', type: () => Int, nullable: true}) id: number,
+    @Args({name: 'title', type: () => String, nullable: true}) title: string,
+  ): Promise<Article> {
+    const data = await (async () => {
+      if (id) {
+        return await this.articlesService.findOne(id) as Article;
+      } else if (title) {
+        return await this.articlesService.findOneByTitle(title) as Article;
+      } else {
+        throw new UnprocessableEntityException('请传入 id 或 title 来获取文章');
+      }
+    })();
+    if (!data) {
+      throw new NotFoundException();
+    }
+    return data;
   }
 
   @Query(returns => Int)
@@ -26,20 +45,16 @@ export class ArticlesResolver {
 
   @Mutation(returns => Article)
   async createArticle(@Args('createArticleInput')input: CreateArticleInput): Promise<Article> {
-    if (!await this.articlesService.titleIsAvailable(input.title)) {
-      throw new ConflictException(`文章标题「${input.title}」重复`);
-    }
     return await this.articlesService.create(input);
   }
 
   @Mutation(returns => Article, {nullable: true})
-  async updateArticle(@Args('id')id: number, @Args('updateArticleInput')input: UpdateArticleInput): Promise<Article> {
-    await this.articlesService.update(id, input);
-    return await this.articlesService.findOne(id);
+  async updateArticle(@Args({name: 'id', type: () => Int}) id: number, @Args('updateArticleInput')input: UpdateArticleInput): Promise<Article> {
+    return await this.articlesService.update(id, input);
   }
 
   @Mutation(returns => Boolean, {nullable: true})
-  async removeArticle(@Args('id')id: number, @Args('updateArticleInput')input: UpdateArticleInput): Promise<boolean> {
+  async removeArticle(@Args({name: 'id', type: () => Int}) id: number, @Args('updateArticleInput')input: UpdateArticleInput): Promise<boolean> {
     await this.articlesService.remove(id);
     return true;
   }

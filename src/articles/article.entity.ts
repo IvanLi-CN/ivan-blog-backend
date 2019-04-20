@@ -37,7 +37,6 @@ export class Article {
   @Column()
   publishedAt: Date;
 
-  @Field()
   @Column({default: false})
   isDel: boolean;
 }
