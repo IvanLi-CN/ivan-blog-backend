@@ -1,11 +1,10 @@
 import { Field, InputType } from 'type-graphql';
-import { MaxLength, MinLength, IsOptional, IsDate } from 'class-validator';
+import { IsOptional, IsDate, Length, MaxLength } from 'class-validator';
 
 @InputType()
 export class CreateArticleInput {
   @Field()
-  @MaxLength(100)
-  @MinLength(1)
+  @Length(1, 100)
   title: string;
 
   @Field({ nullable: true })
@@ -14,14 +13,12 @@ export class CreateArticleInput {
   summary?: string;
 
   @Field({ nullable: true })
-  @MaxLength(15000)
-  @MinLength(1)
+  @Length(1, 15000)
   @IsOptional()
   mdContent?: string;
 
   @Field({ nullable: true })
-  @MaxLength(150000)
-  @MinLength(1)
+  @Length(1, 150000)
   @IsOptional()
   htmlContent?: string;
 
