@@ -1,5 +1,6 @@
-import { Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, Index, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Field, ID, ObjectType } from 'type-graphql';
+import { Tag } from '../tags/tag.entity';
 
 @ObjectType()
 @Entity()
@@ -24,6 +25,11 @@ export class Article {
   @Field()
   @Column({type: 'mediumtext', comment: '文章正文（MD）'})
   htmlContent: string;
+
+  @Field(type => [Tag])
+  @JoinTable()
+  @ManyToMany(type => Tag, tag => tag.articles, {onDelete: 'CASCADE'})
+  tags: Tag[];
 
   @Field()
   @CreateDateColumn()

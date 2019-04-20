@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { Article } from './article.entity';
 import { EntityManager, Repository, Transaction, TransactionManager } from 'typeorm';
 import { ArticlesArgs } from './dtos/articles.args';
@@ -73,5 +73,18 @@ export class ArticlesService {
 
   async findOneByTitle(title: string) {
     return await this.articleRepository.findOne({title, isDel: false});
+  }
+
+  async getArticleTags(articleId: number) {
+    console.log('123');
+    const article = await this.articleRepository.createQueryBuilder('a')
+      .select(['a.id'])
+      .leftJoinAndSelect('a.tags', 'tag')
+      .where('a.id = :id', {id: articleId})
+      .getOne();
+    if (!article) {
+      throw new NotFoundException();
+    }
+    return article.tags;
   }
 }

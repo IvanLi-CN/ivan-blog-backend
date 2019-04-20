@@ -1,5 +1,6 @@
-import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, Index, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Field, ID, ObjectType } from 'type-graphql';
+import { Article } from '../articles/article.entity';
 
 @ObjectType()
 @Entity()
@@ -20,4 +21,8 @@ export class Tag {
   @Field()
   @Column()
   isVisible: boolean;
+
+  @Field(type => [Article], {defaultValue: []})
+  @ManyToMany(type => Article, article => article.tags, {onDelete: 'CASCADE'})
+  articles: Article[];
 }
