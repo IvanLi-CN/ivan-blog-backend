@@ -27,7 +27,7 @@ export class ArticlesService {
     qb.skip((args.pageIndex - 1) * args.pageSize);
     qb.take(args.pageSize);
 
-    return isReturnCount ? qb.getCount() : qb.getMany();
+    return isReturnCount ? await qb.getCount() : await qb.getMany();
   }
 
   @Transaction()
