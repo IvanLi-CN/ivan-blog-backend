@@ -1,4 +1,4 @@
-import { Resolver, Query, Args, Mutation, Root, ResolveProperty } from '@nestjs/graphql';
+import { Args, Mutation, Query, ResolveProperty, Resolver, Root } from '@nestjs/graphql';
 import { Article } from './article.entity';
 import { ArticlesService } from './articles.service';
 import { ArticlesArgs } from './dtos/articles.args';
@@ -55,7 +55,7 @@ export class ArticlesResolver {
   }
 
   @Mutation(returns => Boolean, {nullable: true})
-  async removeArticle(@Args({name: 'id', type: () => Int}) id: number, @Args('updateArticleInput')input: UpdateArticleInput): Promise<boolean> {
+  async removeArticle(@Args({ name: 'id', type: () => Int }) id: number): Promise<boolean> {
     await this.articlesService.remove(id);
     return true;
   }

@@ -54,7 +54,7 @@ export class TagsResolver {
   }
 
   @Mutation(returns => Boolean, {nullable: true})
-  async removeTag(@Args({name: 'id', type: () => Int}) id: number, @Args('updateTagInput')input: UpdateTagInput): Promise<boolean> {
+  async removeTag(@Args({ name: 'id', type: () => Int }) id: number): Promise<boolean> {
     await this.tagsService.remove(id);
     return true;
   }
