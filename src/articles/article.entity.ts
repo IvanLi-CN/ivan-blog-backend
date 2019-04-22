@@ -19,11 +19,11 @@ export class Article {
   summary: string;
 
   @Field()
-  @Column({type: 'varchar', length: 15000, comment: '文章正文（MD）'})
+  @Column({type: 'varchar', length: 15000, comment: '文章正文（MD）', default: ''})
   mdContent: string;
 
   @Field()
-  @Column({type: 'mediumtext', comment: '文章正文（MD）'})
+  @Column({type: 'mediumtext', comment: '文章正文（HTML）'})
   htmlContent: string;
 
   @Field(type => [Tag])

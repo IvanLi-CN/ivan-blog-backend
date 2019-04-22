@@ -1,5 +1,5 @@
 import { Field, InputType, Int } from 'type-graphql';
-import { IsOptional, IsDate, Length, MaxLength, IsArray, ArrayMinSize, IsPositive } from 'class-validator';
+import { IsOptional, IsDate, Length, MaxLength, IsArray, ArrayMinSize, IsPositive, ArrayMaxSize } from 'class-validator';
 
 @InputType()
 export class CreateArticleInput {
@@ -27,10 +27,10 @@ export class CreateArticleInput {
   @IsDate()
   publishedAt?: Date;
 
-  @Field(type => Int, { nullable: true })
+  @Field(type => [Int], {defaultValue: []})
   @IsArray()
   @ArrayMinSize(0)
-  @ArrayMinSize(20)
-  @IsPositive()
-  tagIds?: number[];
+  @ArrayMaxSize(20)
+  @IsPositive({each: true})
+  tagIds: number[];
 }

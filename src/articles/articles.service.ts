@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateArticleInput } from './dtos/create-article.input';
 import { UpdateArticleInput } from './dtos/update-article.input';
 import { MarkdownService } from '../common/services/markdown.service';
+import { Tag } from '../tags/tag.entity';
 
 @Injectable()
 export class ArticlesService {
@@ -33,6 +34,7 @@ export class ArticlesService {
   @Transaction()
   async create(input: CreateArticleInput, @TransactionManager() manager?: EntityManager) {
     const repository = manager.getRepository(Article);
+    const tagRepository = manager.getRepository(Tag);
     const old = await repository.findOne({title: input.title});
     if (old) {
       throw new ConflictException(`文章标题「${input.title}」重复`);
@@ -43,12 +45,16 @@ export class ArticlesService {
     if (!input.htmlContent) {
       input.htmlContent = this.markdownService.prase(input.mdContent);
     }
-    return await repository.save(this.articleRepository.create(input));
+    const tags = await tagRepository.createQueryBuilder('t').whereInIds(input.tagIds).getMany();
+    const tmpArticle = this.articleRepository.create(input);
+    tmpArticle.tags = tags;
+    return await repository.save(tmpArticle);
   }
 
   @Transaction()
   async update(id: number, input: UpdateArticleInput, @TransactionManager() manager?: EntityManager) {
     const repository = manager.getRepository(Article);
+    const tagRepository = manager.getRepository(Tag);
     const old = await repository.findOne({title: input.title});
     if (old && old.id !== id) {
       throw new ConflictException(`文章标题「${input.title}」重复`);
@@ -59,7 +65,12 @@ export class ArticlesService {
     if (input.mdContent && !input.htmlContent) {
       input.htmlContent = this.markdownService.prase(input.mdContent);
     }
-    await repository.update(id, {...input});
+    if (input.tagIds) {
+      const tags = await tagRepository.createQueryBuilder('t').whereInIds(input.tagIds).getMany();
+      await repository.save(repository.merge(old, input, {tags}));
+    } else {
+      await repository.save(repository.merge(old, input));
+    }
     return await repository.findOne(id);
   }
 

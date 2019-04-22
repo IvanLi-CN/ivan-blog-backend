@@ -4,10 +4,11 @@ import { ArticlesResolver } from './articles.resolver';
 import { Article } from './article.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CommonModule } from '../common/common.module';
+import { Tag } from '../tags/tag.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Article]),
+    TypeOrmModule.forFeature([Article, Tag]),
     CommonModule,
   ],
   providers: [ArticlesService, ArticlesResolver],
