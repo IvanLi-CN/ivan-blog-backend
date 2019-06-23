@@ -2,6 +2,9 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { GraphQLModule } from '@nestjs/graphql';
+import { TagsModule } from './tags/tags.module';
+import { ArticlesModule } from './articles/articles.module';
 
 @Module({
   imports: [
@@ -15,6 +18,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
+    GraphQLModule.forRoot({
+      autoSchemaFile: 'schema.gql',
+      debug: true,
+      playground: true,
+    }),
+    ArticlesModule,
+    TagsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
