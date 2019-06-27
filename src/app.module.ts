@@ -17,6 +17,7 @@ import { ArticlesModule } from './articles/articles.module';
       database: 'ivansite',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
+      logging: true,
     }),
     GraphQLModule.forRoot({
       autoSchemaFile: 'schema.gql',

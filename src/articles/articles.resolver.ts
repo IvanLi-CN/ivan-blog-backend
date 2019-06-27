@@ -23,12 +23,15 @@ export class ArticlesResolver {
   async getArticle(
     @Args({name: 'id', type: () => Int, nullable: true}) id: number,
     @Args({name: 'title', type: () => String, nullable: true}) title: string,
+    @Args({name: 'slug', type: () => String, nullable: true}) slug: string,
   ): Promise<Article> {
     const data = await (async () => {
       if (id) {
         return await this.articlesService.findOne(id) as Article;
       } else if (title) {
         return await this.articlesService.findOneByTitle(title) as Article;
+      } else if (slug) {
+        return await this.articlesService.findOneBySlug(slug) as Article;
       } else {
         throw new UnprocessableEntityException('请传入 id 或 title 来获取文章');
       }

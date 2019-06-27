@@ -7,6 +7,10 @@ export class CreateArticleInput {
   @Length(1, 100)
   title: string;
 
+  @Field()
+  @Length(4, 200)
+  slug: string;
+
   @Field({ nullable: true })
   @MaxLength(1000)
   @IsOptional()

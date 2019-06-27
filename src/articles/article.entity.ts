@@ -14,12 +14,17 @@ export class Article {
   @Column({type: 'varchar', length: 200, comment: '文章标题'})
   title: string;
 
+  @Field()
+  @Index({unique: true})
+  @Column({type: 'varchar', length: 200, comment: '文章 slug'})
+  slug: string;
+
   @Field({ nullable: true })
   @Column({type: 'varchar', length: 1000, default: '', comment: '文章摘要'})
   summary: string;
 
   @Field()
-  @Column({type: 'varchar', length: 15000, comment: '文章正文（MD）', default: ''})
+  @Column({type: 'mediumtext', comment: '文章正文（MD）', nullable: true})
   mdContent: string;
 
   @Field()
