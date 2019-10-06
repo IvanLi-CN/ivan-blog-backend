@@ -7,27 +7,22 @@ import { CreateArticleInput } from './dtos/create-article.input';
 import { UpdateArticleInput } from './dtos/update-article.input';
 import { MarkdownService } from '../common/services/markdown.service';
 import { Tag } from '../tags/tag.entity';
+import { BaseDbService } from '../common/services/base-db.service';
 
 @Injectable()
-export class ArticlesService {
+export class ArticlesService extends BaseDbService<Article> {
   constructor(
     @InjectRepository(Article)
     private articleRepository: Repository<Article>,
     private markdownService: MarkdownService,
   ) {
+    super();
   }
 
   async findAll(args: ArticlesArgs, isReturnCount: boolean = false) {
     const qb = this.articleRepository.createQueryBuilder('a');
-    args.title && qb.andWhere('a.title LIKE :title', { title: `%${args.title}%` });
-    if (isNaN(args.pageIndex)) {
-      args.pageIndex = 1;
-    }
-    if (isNaN(args.pageSize)) {
-      args.pageSize = 15;
-    }
-    qb.skip((args.pageIndex - 1) * args.pageSize);
-    qb.take(args.pageSize);
+    BaseDbService.filterLike(qb, 'a', 'title', args);
+    BaseDbService.baseQuery(qb, 'a', args);
 
     return isReturnCount ? await qb.getCount() : await qb.getMany();
   }
@@ -81,7 +76,7 @@ export class ArticlesService {
   }
 
   async remove(id: number) {
-    await this.articleRepository.update(id, { isDel: true });
+    await this.articleRepository.update(id, { isDelete: true });
   }
 
   async findOne(id: number) {
@@ -89,11 +84,11 @@ export class ArticlesService {
   }
 
   async findOneByTitle(title: string) {
-    return await this.articleRepository.findOne({ title: `%${title}%`, isDel: false });
+    return await this.articleRepository.findOne({ title: `%${title}%`, isDelete: false });
   }
 
   async findOneBySlug(slug: string) {
-    return await this.articleRepository.findOne({ slug, isDel: false });
+    return await this.articleRepository.findOne({ slug, isDelete: false });
   }
 
   async getArticleTags(articleId: number) {

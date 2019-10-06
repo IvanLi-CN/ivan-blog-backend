@@ -12,6 +12,5 @@ import { Tag } from '../tags/tag.entity';
     CommonModule,
   ],
   providers: [ArticlesService, ArticlesResolver],
-
 })
 export class ArticlesModule {}

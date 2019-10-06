@@ -5,6 +5,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TagsModule } from './tags/tags.module';
 import { ArticlesModule } from './articles/articles.module';
+import { AccountsModule } from './accounts/accounts.module';
+import { CoreModule } from './core/core.module';
 
 @Module({
   imports: [
@@ -23,9 +25,13 @@ import { ArticlesModule } from './articles/articles.module';
       autoSchemaFile: 'schema.gql',
       debug: true,
       playground: true,
+      context: ({ req, res }) => ({ req, res }),
     }),
+    CoreModule,
     ArticlesModule,
     TagsModule,
+    AccountsModule,
+    CoreModule,
   ],
   controllers: [AppController],
   providers: [AppService],
