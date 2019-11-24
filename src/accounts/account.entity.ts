@@ -1,7 +1,8 @@
-import { Column, Entity, Index } from 'typeorm';
+import { Column, Entity, Index, OneToMany } from 'typeorm';
 import { Field, ObjectType } from 'type-graphql';
 import { BaseEntity } from '../common/entities/base.entity';
 import { AccountTypes } from '../core/auth/account-types.enum';
+import { Article } from '../articles/article.entity';
 
 @ObjectType()
 @Entity()
@@ -24,4 +25,7 @@ export class Account extends BaseEntity {
 
   @Column({ type: 'enum', enum: AccountTypes, comment: '角色', default: AccountTypes.member})
   role: AccountTypes;
+
+  @OneToMany(type => Article, article => article.author)
+  articles: Article[];
 }

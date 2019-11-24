@@ -5,9 +5,11 @@ import { ArticlesArgs } from './dtos/articles.args';
 import { Int } from 'type-graphql';
 import { CreateArticleInput } from './dtos/create-article.input';
 import { UpdateArticleInput } from './dtos/update-article.input';
-import { NotFoundException, UnprocessableEntityException } from '@nestjs/common';
+import { NotFoundException, UnprocessableEntityException, UseGuards } from '@nestjs/common';
 import { Tag } from '../tags/tag.entity';
+import { AccountGuard } from '../core/auth/guards/account.guard';
 
+@UseGuards(AccountGuard)
 @Resolver(of => Article)
 export class ArticlesResolver {
   constructor(

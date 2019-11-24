@@ -5,11 +5,16 @@ import { UpdateAccountInput } from './dtos/update-account.input';
 import { RegisterAccountInput } from './dtos/register-account.input';
 import { QueryAccountsArgs } from './dtos/query-accounts.args';
 import { Int } from 'type-graphql';
-import { UseGuards } from '@nestjs/common';
+import { ForbiddenException, UseGuards } from '@nestjs/common';
 import { AccountGuard } from '../core/auth/guards/account.guard';
 import { Roles } from '../core/auth/decorators/roles.decorator';
 import { AccountTypes } from '../core/auth/account-types.enum';
+import { CurrentUser } from '../core/auth/decorators/current-user.decorator';
+import { AccountJwtInfoDto } from '../core/auth/dtos/account-jwt-info.dto';
+import { AccountInfoDto } from './dtos/account-info.dto';
 
+@UseGuards(AccountGuard)
+@Roles()
 @Resolver(of => Account)
 export class AccountsResolver {
   constructor(
@@ -17,15 +22,20 @@ export class AccountsResolver {
   ) {
   }
 
-  @UseGuards(AccountGuard)
   @Roles(AccountTypes.admin)
   @Query(returns => [Account])
-  async queryAccounts(@Args() args: QueryAccountsArgs): Promise<Account[]> {
+  async accounts(@Args() args: QueryAccountsArgs): Promise<Account[]> {
     return await this.accountsService.query(args);
   }
 
+  @Roles(AccountTypes.admin, AccountTypes.member)
+  @Query(returns => AccountInfoDto)
+  async currAccount(@CurrentUser() currUser): Promise<AccountInfoDto> {
+    return await this.accountsService.findOne(currUser.id);
+  }
+
   @Query(returns => Int)
-  async queryAccountsCount(@Args() args: QueryAccountsArgs): Promise<number> {
+  async accountsCount(@Args() args: QueryAccountsArgs): Promise<number> {
     return await this.accountsService.count(args);
   }
 
@@ -38,10 +48,15 @@ export class AccountsResolver {
   async updateAccount(
     @Args('updateAccountInput') input: UpdateAccountInput,
     @Args('id') id: number,
+    @CurrentUser() user: AccountJwtInfoDto,
     ): Promise<Account> {
+    if (user.role !== AccountTypes.admin && user.id !== id) {
+      throw new ForbiddenException('您无权修改他人账户信息！');
+    }
     return await this.accountsService.update(id, input);
   }
 
+  @Roles(AccountTypes.admin)
   @Mutation(returns => Boolean)
   async removeAccount(
     @Args({name: 'id', type: () => Int, nullable: true}) id?: number,

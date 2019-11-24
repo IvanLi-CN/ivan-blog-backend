@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { AccountTypes } from '../account-types.enum';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { AppRequest } from '../models/app-request.model';
+import { AuthenticationError } from 'apollo-server-errors';
 
 @Injectable()
 export class AccountGuard implements CanActivate {

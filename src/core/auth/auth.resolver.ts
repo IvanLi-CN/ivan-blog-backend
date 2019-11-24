@@ -24,7 +24,7 @@ export class AuthResolver {
     if (user) {
       try {
         console.log(this.authService, this.authService.sign4Admin, this.authService.sign4Member);
-        const token = await this.authService.sign4Member({ id: user.id, permissions: null, role: null });
+        const token = await this.authService.sign4Member({ id: user.id, /*permissions: null, */role: null });
         await authTokenSetter(token);
         return user;
       } catch (e) {

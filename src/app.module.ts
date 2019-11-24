@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, UnauthorizedException } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -7,6 +7,7 @@ import { TagsModule } from './tags/tags.module';
 import { ArticlesModule } from './articles/articles.module';
 import { AccountsModule } from './accounts/accounts.module';
 import { CoreModule } from './core/core.module';
+import { UnauthorizedError } from 'type-graphql';
 
 @Module({
   imports: [
@@ -24,14 +25,23 @@ import { CoreModule } from './core/core.module';
     GraphQLModule.forRoot({
       autoSchemaFile: 'schema.gql',
       debug: true,
-      playground: true,
+      engine: {
+        rewriteError(err) {
+          console.log('rewriteError', err);
+          // Return `null` to avoid reporting `AuthenticationError`s
+          if (err instanceof UnauthorizedException) {
+            return null;
+          }
+          // All other errors will be reported.
+          return err;
+        },
+      },
       context: ({ req, res }) => ({ req, res }),
     }),
     CoreModule,
     ArticlesModule,
     TagsModule,
     AccountsModule,
-    CoreModule,
   ],
   controllers: [AppController],
   providers: [AppService],

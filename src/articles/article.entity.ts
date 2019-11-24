@@ -1,7 +1,8 @@
-import { Column, Entity, Index, JoinTable, ManyToMany } from 'typeorm';
+import { Column, Entity, Index, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
 import { Field, ObjectType } from 'type-graphql';
 import { Tag } from '../tags/tag.entity';
 import { BaseEntity } from '../common/entities/base.entity';
+import { Account } from '../accounts/account.entity';
 
 @ObjectType()
 @Entity()
@@ -32,6 +33,14 @@ export class Article extends BaseEntity {
   @JoinTable()
   @ManyToMany(type => Tag, tag => tag.articles, { onDelete: 'CASCADE' })
   tags: Tag[];
+
+  @Field()
+  @ManyToOne(type => Account, account => account.articles)
+  author: Account;
+
+  @Field()
+  @Column()
+  authorId: number;
 
   @Field()
   @Column()

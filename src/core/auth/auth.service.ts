@@ -17,8 +17,8 @@ export class AuthService {
     return JWT.verify(token, this.publicKey) as any;
   }
 
-  sign4Member({ id, permissions }: AccountJwtInfoDto, expiresIn = '15m') {
-    const dto: AccountJwtInfoDto = { id, permissions, role: AccountTypes.member };
+  sign4Member({ id/*, permissions*/ }: AccountJwtInfoDto, expiresIn = '15m') {
+    const dto: AccountJwtInfoDto = { id/*, permissions*/, role: AccountTypes.member };
     return JWT.sign(
       dto,
       this.privateKey,
@@ -26,8 +26,8 @@ export class AuthService {
     );
   }
 
-  sign4Admin({ id, permissions }: AccountJwtInfoDto, expiresIn = '15m') {
-    const dto: AccountJwtInfoDto = { id, permissions, role: AccountTypes.admin };
+  sign4Admin({ id/*, permissions*/ }: AccountJwtInfoDto, expiresIn = '15m') {
+    const dto: AccountJwtInfoDto = { id/*, permissions*/, role: AccountTypes.admin };
     return JWT.sign(
       dto,
       this.privateKey,
