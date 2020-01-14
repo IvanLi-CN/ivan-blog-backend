@@ -71,7 +71,7 @@ export class AccountsService extends BaseDbService<Account> {
 
   async findOneByAccountAndPassword(account: string, password: string) {
     const user = await this.accountRepository.findOne({account}, {
-      select: ['id', 'password', 'account', 'nick', 'role'],
+      select: ['id', 'password', 'account', 'nick', 'systemRole'],
     });
     if (!user || !user.password || !await bcrypt.compare(password, Buffer.from(user.password).toString())) {
       throw new BadRequestException('账号或密码错误！');
@@ -83,7 +83,7 @@ export class AccountsService extends BaseDbService<Account> {
 
   async findOne(id: number) {
     return await this.accountRepository.findOne({id}, {
-      select: ['id', 'account', 'nick', 'role'],
+      select: ['id', 'account', 'nick', 'systemRole'],
     });
   }
 }

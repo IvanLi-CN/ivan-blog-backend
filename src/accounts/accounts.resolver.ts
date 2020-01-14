@@ -8,7 +8,7 @@ import { Int } from 'type-graphql';
 import { ForbiddenException, UseGuards } from '@nestjs/common';
 import { AccountGuard } from '../core/auth/guards/account.guard';
 import { Roles } from '../core/auth/decorators/roles.decorator';
-import { AccountTypes } from '../core/auth/account-types.enum';
+import { allRoles, SystemRoles } from '../core/auth/account-types.enum';
 import { CurrentUser } from '../core/auth/decorators/current-user.decorator';
 import { AccountJwtInfoDto } from '../core/auth/dtos/account-jwt-info.dto';
 import { AccountInfoDto } from './dtos/account-info.dto';
@@ -22,13 +22,21 @@ export class AccountsResolver {
   ) {
   }
 
-  @Roles(AccountTypes.admin)
+  @Roles(SystemRoles.admin)
+  @Query(returns => [Account])
+  async account(
+    @Args({name: 'id', type: () => Int}) id: number,
+  ): Promise<Account> {
+    return await this.accountsService.findOne(id);
+  }
+
+  @Roles(SystemRoles.admin)
   @Query(returns => [Account])
   async accounts(@Args() args: QueryAccountsArgs): Promise<Account[]> {
     return await this.accountsService.query(args);
   }
 
-  @Roles(AccountTypes.admin, AccountTypes.member)
+  @Roles(...allRoles)
   @Query(returns => AccountInfoDto)
   async currAccount(@CurrentUser() currUser): Promise<AccountInfoDto> {
     return await this.accountsService.findOne(currUser.id);
@@ -50,13 +58,13 @@ export class AccountsResolver {
     @Args('id') id: number,
     @CurrentUser() user: AccountJwtInfoDto,
     ): Promise<Account> {
-    if (user.role !== AccountTypes.admin && user.id !== id) {
+    if (user.systemRole !== SystemRoles.admin && user.id !== id) {
       throw new ForbiddenException('您无权修改他人账户信息！');
     }
     return await this.accountsService.update(id, input);
   }
 
-  @Roles(AccountTypes.admin)
+  @Roles(SystemRoles.admin)
   @Mutation(returns => Boolean)
   async removeAccount(
     @Args({name: 'id', type: () => Int, nullable: true}) id?: number,

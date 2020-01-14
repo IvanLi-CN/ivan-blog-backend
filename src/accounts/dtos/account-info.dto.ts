@@ -1,5 +1,5 @@
 import { Field, ObjectType } from 'type-graphql';
-import { AccountTypes } from '../../core/auth/account-types.enum';
+import { SystemRoles } from '../../core/auth/account-types.enum';
 
 @ObjectType()
 export class AccountInfoDto {
@@ -10,5 +10,5 @@ export class AccountInfoDto {
   @Field()
   nick: string;
   @Field()
-  role: AccountTypes;
+  systemRole: SystemRoles;
 }

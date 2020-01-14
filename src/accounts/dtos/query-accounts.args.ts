@@ -6,10 +6,11 @@ import { QueryListArgs } from '../../common/dtos/query-list.args';
 export class QueryAccountsArgs extends QueryListArgs {
   @Field({nullable: true})
   @IsOptional()
-  @MinLength(1)
   nick?: string;
   @Field({nullable: true})
   @IsOptional()
-  @MinLength(1)
   account?: string;
+  @Field({nullable: true})
+  @IsOptional()
+  isActive?: boolean;
 }

@@ -1,5 +1,5 @@
-import { AccountTypes } from '../account-types.enum';
+import { SystemRoles } from '../account-types.enum';
 
 export class AccountInfoBase {
-  type?: AccountTypes;
+  type?: SystemRoles;
 }

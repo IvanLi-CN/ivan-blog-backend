@@ -1,12 +1,12 @@
 import { Column, Entity, Index, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
 import { Field, ObjectType } from 'type-graphql';
 import { Tag } from '../tags/tag.entity';
-import { BaseEntity } from '../common/entities/base.entity';
+import { AppBaseEntity } from '../common/entities/app-base-entity';
 import { Account } from '../accounts/account.entity';
 
 @ObjectType()
 @Entity()
-export class Article extends BaseEntity {
+export class Article extends AppBaseEntity {
   @Field()
   @Index()
   @Column({ type: 'varchar', length: 200, comment: '文章标题' })
@@ -46,6 +46,9 @@ export class Article extends BaseEntity {
   @Column()
   publishedAt: Date;
 
-  @Column({ default: false })
+  @Column({ default: false, select: false })
   isDelete: boolean;
+
+  @Column({ default: true })
+  isPublic: boolean;
 }

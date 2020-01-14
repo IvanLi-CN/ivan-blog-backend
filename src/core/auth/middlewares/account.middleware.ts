@@ -1,6 +1,6 @@
 import { Injectable, NestMiddleware, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from '../auth.service';
-import { AccountTypes } from '../account-types.enum';
+import { SystemRoles } from '../account-types.enum';
 import { AccountJwtInfoDto } from '../dtos/account-jwt-info.dto';
 import { AppRequest } from '../models/app-request.model';
 import { Response } from 'express';
@@ -22,11 +22,17 @@ export class AccountMiddleware implements NestMiddleware {
       res.header('authorization', '');
       return next();
     }
-    if (info.role !== AccountTypes.admin && info.role !== AccountTypes.member) {
-      throw new UnauthorizedException('非法的用户角色！');
-    }
-    if (isNaN(info.id)) {
-      throw new UnauthorizedException('未知用户！');
+    try {
+      if (info.systemRole !== SystemRoles.admin && info.systemRole !== SystemRoles.member) {
+        throw new UnauthorizedException('非法的用户角色！');
+      }
+      if (isNaN(info.id)) {
+        throw new UnauthorizedException('未知用户！');
+      }
+    } catch (e) {
+      res.header('app-error', e.message);
+      res.status(403);
+      return next();
     }
     req.user = info;
     next();

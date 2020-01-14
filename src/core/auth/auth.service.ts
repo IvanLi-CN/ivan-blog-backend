@@ -1,7 +1,7 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtPrivateKeyToken, JwtPublicKeyToken } from './auth.providers';
 import * as JWT from 'jsonwebtoken';
-import { AccountTypes } from './account-types.enum';
+import { SystemRoles } from './account-types.enum';
 import { AccountJwtInfoDto } from './dtos/account-jwt-info.dto';
 
 @Injectable()
@@ -18,7 +18,7 @@ export class AuthService {
   }
 
   sign4Member({ id/*, permissions*/ }: AccountJwtInfoDto, expiresIn = '15m') {
-    const dto: AccountJwtInfoDto = { id/*, permissions*/, role: AccountTypes.member };
+    const dto: AccountJwtInfoDto = { id/*, permissions*/, systemRole: SystemRoles.member };
     return JWT.sign(
       dto,
       this.privateKey,
@@ -27,7 +27,7 @@ export class AuthService {
   }
 
   sign4Admin({ id/*, permissions*/ }: AccountJwtInfoDto, expiresIn = '15m') {
-    const dto: AccountJwtInfoDto = { id/*, permissions*/, role: AccountTypes.admin };
+    const dto: AccountJwtInfoDto = { id/*, permissions*/, systemRole: SystemRoles.admin };
     return JWT.sign(
       dto,
       this.privateKey,

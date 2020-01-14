@@ -1,7 +1,7 @@
 import { ConflictException, Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import { Article } from './article.entity';
-import { EntityManager, Repository, Transaction, TransactionManager } from 'typeorm';
-import { ArticlesArgs } from './dtos/articles.args';
+import { EntityManager, getConnection, Repository, Transaction, TransactionManager } from 'typeorm';
+import { QueryArticlesArgs } from './dtos/query-articles-args';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateArticleInput } from './dtos/create-article.input';
 import { UpdateArticleInput } from './dtos/update-article.input';
@@ -19,37 +19,42 @@ export class ArticlesService extends BaseDbService<Article> {
     super();
   }
 
-  async findAll(args: ArticlesArgs, isReturnCount: boolean = false) {
+  async findAll(args: QueryArticlesArgs, isReturnCount: boolean = false) {
     const qb = this.articleRepository.createQueryBuilder('a');
     BaseDbService.filterLike(qb, 'a', 'title', args);
+    BaseDbService.filterEqual(qb, 'a', 'slug', args);
+    BaseDbService.filterEqual(qb, 'a', 'isPublic', args);
     BaseDbService.baseQuery(qb, 'a', args);
 
     return isReturnCount ? await qb.getCount() : await qb.getMany();
   }
 
-  @Transaction()
-  async create(input: CreateArticleInput, @TransactionManager() manager?: EntityManager) {
-    const repository = manager.getRepository(Article);
-    const tagRepository = manager.getRepository(Tag);
-    const old = await repository.findOne({ title: input.title });
-    if (old) {
-      throw new ConflictException(`文章标题「${input.title}」重复`);
-    }
-    if (!input.publishedAt) {
-      input.publishedAt = new Date();
-    }
-    if (!input.htmlContent) {
-      if (!input.mdContent) {
-        throw new UnprocessableEntityException('请传入 HTML 或 MarkDown 格式的正文。文章内容不得为空');
+  async create(input: CreateArticleInput) {
+    const id = await getConnection().transaction(async manager => {
+      const repository = manager.getRepository(Article);
+      const tagRepository = manager.getRepository(Tag);
+      const old = await repository.findOne({ title: input.title });
+      if (old) {
+        throw new ConflictException(`文章标题「${input.title}」重复`);
       }
-      input.htmlContent = this.markdownService.prase(input.mdContent);
-    }
-    const tags = input.tagIds.length === 0 ?
-      [] :
-      await tagRepository.createQueryBuilder('t').whereInIds(input.tagIds).getMany();
-    const tmpArticle = this.articleRepository.create(input);
-    tmpArticle.tags = tags;
-    return await repository.save(tmpArticle);
+      if (!input.publishedAt) {
+        input.publishedAt = new Date();
+      }
+      if (!input.htmlContent) {
+        if (!input.mdContent) {
+          throw new UnprocessableEntityException('请传入 HTML 或 MarkDown 格式的正文。文章内容不得为空');
+        }
+        input.htmlContent = this.markdownService.prase(input.mdContent);
+      }
+      const tags = input.tagIds.length === 0 ?
+        [] :
+        await tagRepository.createQueryBuilder('t').whereInIds(input.tagIds).getMany();
+      const tmpArticle = this.articleRepository.create(input);
+      tmpArticle.tags = tags;
+      const {identifiers} = await repository.insert(tmpArticle);
+      return identifiers[0].id;
+    });
+    return await this.findOne(id);
   }
 
   @Transaction()
@@ -80,7 +85,14 @@ export class ArticlesService extends BaseDbService<Article> {
   }
 
   async findOne(id: number) {
-    return await this.articleRepository.findOne(id);
+    console.log('id', id, typeof id);
+    return await this.articleRepository.findOne({
+      where: {id},
+      relations: ['author'],
+    }).then(v => {
+      console.log('v', v);
+      return v;
+    });
   }
 
   async findOneByTitle(title: string) {

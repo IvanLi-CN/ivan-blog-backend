@@ -1,5 +1,6 @@
-import { Field, InputType, Int } from 'type-graphql';
-import { IsOptional, IsDate, Length, MaxLength, IsArray, ArrayMinSize, IsPositive, ArrayMaxSize } from 'class-validator';
+import { Field, ID, InputType, Int } from 'type-graphql';
+import { IsInt, IsOptional, IsDate, Length, MaxLength, IsArray, ArrayMinSize, IsPositive, ArrayMaxSize, Min } from 'class-validator';
+import { ToInt } from '@neuralegion/class-sanitizer/dist';
 
 @InputType()
 export class CreateArticleInput {
@@ -15,6 +16,12 @@ export class CreateArticleInput {
   @MaxLength(1000)
   @IsOptional()
   summary?: string;
+
+  @Field(() => ID)
+  @IsInt()
+  @ToInt()
+  @Min(1)
+  authorId?: number;
 
   @Field({ nullable: true })
   @Length(1, 15000)
@@ -37,4 +44,6 @@ export class CreateArticleInput {
   @ArrayMaxSize(20)
   @IsPositive({each: true})
   tagIds: number[];
+  @Field()
+  isPublic?: boolean;
 }

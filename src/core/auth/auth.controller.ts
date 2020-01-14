@@ -2,7 +2,7 @@
 // import { UserLoginWithPasswordDto } from './dtos/user-login-with-password.dto';
 // import { AuthService } from './auth.service';
 // import { UserLoginWithCaptchaDto } from './dtos/user-login-with-captcha.dto';
-// import { AccountTypes } from './account-types.enum';
+// import { SystemRoles } from './account-types.enum';
 //
 // @Controller()
 // export class AuthController {
@@ -35,9 +35,9 @@
 //       }, HttpStatus.BAD_REQUEST);
 //     }
 //     const user = await this.userService.getOneOrAutoRegister(dto.phone);
-//     const token = await this.authService.sign4Member({id: user.id, permissions: user.permissions, role: null});
+//     const token = await this.authService.sign4Member({id: user.id, permissions: user.permissions, systemRole: null});
 //     res.append('authorization', `bearer ${token}`);
-//     res.cookie('auto-login', await this.authService.sign4Member({id: user.id, permissions: user.permissions, role: null}, '1d'));
+//     res.cookie('auto-login', await this.authService.sign4Member({id: user.id, permissions: user.permissions, systemRole: null}, '1d'));
 //     res.send({
 //       id: user.id,
 //       phone: user.phone,
@@ -55,8 +55,8 @@
 //     if (!admin) {
 //       throw new BadRequestException('用户名或对应的口令错误！');
 //     }
-//     const token = await this.authService.sign4Admin({id: admin.id, permissions: admin.permissions, role: null});
-//     res.cookie('auto-login', await this.authService.sign4Admin({id: admin.id, permissions: admin.permissions, role: null}, '1h'));
+//     const token = await this.authService.sign4Admin({id: admin.id, permissions: admin.permissions, systemRole: null});
+//     res.cookie('auto-login', await this.authService.sign4Admin({id: admin.id, permissions: admin.permissions, systemRole: null}, '1h'));
 //     res.append('authorization', `bearer ${token}`);
 //     res.send({
 //       ...admin,
@@ -81,14 +81,14 @@
 //     const user = await this.authService.getAccount('Bearer ' + req.cookies['auto-login']);
 //     let token: string;
 //     let info;
-//     switch (user.role) {
-//       case AccountTypes.member:
+//     switch (user.systemRole) {
+//       case SystemRoles.member:
 //         info = await this.userService.getOne(user.id);
-//         token = await this.authService.sign4Member({id: user.id, permissions: user.permissions, role: null});
+//         token = await this.authService.sign4Member({id: user.id, permissions: user.permissions, systemRole: null});
 //         break;
-//       case AccountTypes.admin:
+//       case SystemRoles.admin:
 //         info = await this.adminsService.getOne(user.id);
-//         token = await this.authService.sign4Admin({id: user.id, permissions: user.permissions, role: null});
+//         token = await this.authService.sign4Admin({id: user.id, permissions: user.permissions, systemRole: null});
 //         break;
 //     }
 //     res.append('authorization', `bearer ${token}`);
