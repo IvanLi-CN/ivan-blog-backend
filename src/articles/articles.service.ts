@@ -8,18 +8,22 @@ import { UpdateArticleInput } from './dtos/update-article.input';
 import { MarkdownService } from '../common/services/markdown.service';
 import { Tag } from '../tags/tag.entity';
 import { BaseDbService } from '../common/services/base-db.service';
+import { Account } from '../accounts/account.entity';
 
 @Injectable()
 export class ArticlesService extends BaseDbService<Article> {
   constructor(
     @InjectRepository(Article)
     private articleRepository: Repository<Article>,
+    @InjectRepository(Account)
+    private accountRepository: Repository<Account>,
     private markdownService: MarkdownService,
   ) {
     super();
   }
 
   async findAll(args: QueryArticlesArgs, isReturnCount: boolean = false) {
+    console.log(args);
     const qb = this.articleRepository.createQueryBuilder('a');
     BaseDbService.filterLike(qb, 'a', 'title', args);
     BaseDbService.filterEqual(qb, 'a', 'slug', args);
@@ -85,13 +89,9 @@ export class ArticlesService extends BaseDbService<Article> {
   }
 
   async findOne(id: number) {
-    console.log('id', id, typeof id);
     return await this.articleRepository.findOne({
       where: {id},
       relations: ['author'],
-    }).then(v => {
-      console.log('v', v);
-      return v;
     });
   }
 
@@ -113,5 +113,11 @@ export class ArticlesService extends BaseDbService<Article> {
       throw new NotFoundException();
     }
     return article.tags;
+  }
+
+  async getArticleAuthor(article: Article) {
+    return await this.accountRepository.findOne({
+      where: {id: article.authorId},
+    });
   }
 }

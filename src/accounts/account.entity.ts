@@ -17,7 +17,7 @@ export class Account extends AppBaseEntity {
   @Column({ type: 'char', length: 32, comment: '昵称' })
   nick: string;
 
-  @Column({ type: 'char', length: 128, comment: '密码' })
+  @Column({ type: 'char', length: 128, comment: '密码', select: false })
   password: string;
 
   @Column({ default: false, select: false })

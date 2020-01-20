@@ -141,7 +141,7 @@ export class TypeOrmHelper<Entity extends object> {
   }
 
   static filterEqual<T>(qb: SelectQueryBuilder<T>, alias: string, field: string, params: { [field: string]: any }) {
-    params[field] && qb.andWhere(`${alias}.${field} = :${field}`, params);
+    params[field] !== undefined && qb.andWhere(`${alias}.${field} = :${field}`, params);
   }
 
   static filterLike<T, Conditions>(

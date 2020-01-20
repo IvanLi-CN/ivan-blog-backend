@@ -8,6 +8,7 @@ import { UpdateArticleInput } from './dtos/update-article.input';
 import { NotFoundException, UnprocessableEntityException, UseGuards } from '@nestjs/common';
 import { Tag } from '../tags/tag.entity';
 import { AccountGuard } from '../core/auth/guards/account.guard';
+import { Account } from '../accounts/account.entity';
 
 @UseGuards(AccountGuard)
 @Resolver(() => Article)
@@ -72,5 +73,10 @@ export class ArticlesResolver {
   @ResolveProperty()
   async tags(@Root() article: Article): Promise<Tag[]> {
     return await this.articlesService.getArticleTags(article.id);
+  }
+
+  @ResolveProperty()
+  async author(@Root() article: Article): Promise<Account> {
+    return await this.articlesService.getArticleAuthor(article);
   }
 }
