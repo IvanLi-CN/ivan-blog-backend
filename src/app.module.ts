@@ -7,17 +7,16 @@ import { TagsModule } from './tags/tags.module';
 import { ArticlesModule } from './articles/articles.module';
 import { AccountsModule } from './accounts/accounts.module';
 import { CoreModule } from './core/core.module';
-import { UnauthorizedError } from 'type-graphql';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      type: 'mysql',
+      type: 'postgres',
       host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: 'root',
-      database: 'ivansite',
+      port: 5432,
+      username: 'blog',
+      password: '',
+      database: 'blog',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
       logging: true,

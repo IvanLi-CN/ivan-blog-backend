@@ -1,4 +1,4 @@
-import { ArgsType, Field, ID } from 'type-graphql';
+import { ArgsType, Field, ID } from '@nestjs/graphql';
 import { MinLength, IsOptional, IsInt, Min } from 'class-validator';
 import { QueryListArgs } from '../../common/dtos/query-list.args';
 import { ToInt } from '@neuralegion/class-sanitizer/dist';

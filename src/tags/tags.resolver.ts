@@ -1,25 +1,31 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Parent, Query, ResolveField, Resolver, Root } from '@nestjs/graphql';
 import { TagsService } from './tags.service';
-import { Int } from 'type-graphql';
+import { Int } from '@nestjs/graphql';
 import { NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import { Tag } from './tag.entity';
 import { TagsArgs } from './dtos/tags.args';
 import { UpdateTagInput } from './dtos/update-tag.input';
 import { CreateTagInput } from './dtos/create-tag.input';
+import { Article } from '../articles/article.entity';
 
-@Resolver('Tag')
+@Resolver(Tag)
 export class TagsResolver {
   constructor(
     private tagsService: TagsService,
   ) { }
 
   @Query(returns => [Tag])
-  async getTags(@Args() args: TagsArgs): Promise<Tag[]> {
+  async tags(@Args() args: TagsArgs): Promise<Tag[]> {
     return await this.tagsService.findAll(args) as Tag[];
   }
 
+  @Query(returns => Int)
+  async tagsCount(@Args() args: TagsArgs): Promise<Tag[]> {
+    return await this.tagsService.findAll(args, true) as Tag[];
+  }
+
   @Query(returns => Tag)
-  async getTag(
+  async tag(
     @Args({name: 'id', type: () => Int, nullable: true}) id: number,
     @Args({name: 'name', type: () => String, nullable: true}) name: string,
   ): Promise<Tag> {
@@ -57,5 +63,10 @@ export class TagsResolver {
   async removeTag(@Args({ name: 'id', type: () => Int }) id: number): Promise<boolean> {
     await this.tagsService.remove(id);
     return true;
+  }
+
+  @ResolveField('articles')
+  async articles(@Parent() tag: Tag): Promise<Article[]> {
+    return await this.tagsService.findArticlesByTagId(tag.id);
   }
 }

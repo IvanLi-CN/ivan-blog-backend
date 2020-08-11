@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { TagsArgs } from './dtos/tags.args';
 import { UpdateTagInput } from './dtos/update-tag.input';
 import { CreateTagInput } from './dtos/create-tag.input';
+import { Article } from '../articles/article.entity';
 
 @Injectable()
 export class TagsService {
@@ -64,5 +65,12 @@ export class TagsService {
 
   async findOneByName(name: string) {
     return await this.tagRepository.findOne({name});
+  }
+
+  async findArticlesByTagId(id: number): Promise<Article[]> {
+    return (await this.tagRepository.findOne({
+      where: {id},
+      relations: ['articles'],
+    }))?.articles ?? [];
   }
 }

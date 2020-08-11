@@ -1,7 +1,7 @@
 import { ConflictException, Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import { Article } from './article.entity';
 import { EntityManager, getConnection, Repository, Transaction, TransactionManager } from 'typeorm';
-import { QueryArticlesArgs } from './dtos/query-articles-args';
+import { QueryArticlesArgs } from './dtos/query-articles.args';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateArticleInput } from './dtos/create-article.input';
 import { UpdateArticleInput } from './dtos/update-article.input';
@@ -28,6 +28,7 @@ export class ArticlesService extends BaseDbService<Article> {
     BaseDbService.filterLike(qb, 'a', 'title', args);
     BaseDbService.filterEqual(qb, 'a', 'slug', args);
     BaseDbService.filterEqual(qb, 'a', 'isPublic', args);
+    BaseDbService.sortResults(qb, 'a', 'createdAt', args);
     BaseDbService.baseQuery(qb, 'a', args);
 
     return isReturnCount ? await qb.getCount() : await qb.getMany();

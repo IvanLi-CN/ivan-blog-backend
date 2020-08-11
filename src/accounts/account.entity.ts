@@ -1,5 +1,5 @@
 import { Column, Entity, Index, OneToMany } from 'typeorm';
-import { Field, ObjectType } from 'type-graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 import { SystemRoles } from '../core/auth/account-types.enum';
 import { Article } from '../articles/article.entity';
 import { AppBaseEntity } from '../common/entities/app-base-entity';

@@ -1,8 +1,8 @@
-import { Args, Mutation, Query, ResolveProperty, Resolver, Root } from '@nestjs/graphql';
+import { Args, Mutation, Query, ResolveField, Resolver, Root } from '@nestjs/graphql';
 import { Article } from './article.entity';
 import { ArticlesService } from './articles.service';
-import { QueryArticlesArgs } from './dtos/query-articles-args';
-import { Int } from 'type-graphql';
+import { QueryArticlesArgs } from './dtos/query-articles.args';
+import { Int } from '@nestjs/graphql';
 import { CreateArticleInput } from './dtos/create-article.input';
 import { UpdateArticleInput } from './dtos/update-article.input';
 import { NotFoundException, UnprocessableEntityException, UseGuards } from '@nestjs/common';
@@ -70,12 +70,12 @@ export class ArticlesResolver {
     return true;
   }
 
-  @ResolveProperty()
+  @ResolveField()
   async tags(@Root() article: Article): Promise<Tag[]> {
     return await this.articlesService.getArticleTags(article.id);
   }
 
-  @ResolveProperty()
+  @ResolveField()
   async author(@Root() article: Article): Promise<Account> {
     return await this.articlesService.getArticleAuthor(article);
   }

@@ -1,3 +1,3 @@
-import { ReflectMetadata } from '@nestjs/common';
+import { SetMetadata } from '@nestjs/common';
 
-export const OnlyBoundOrder = () => ReflectMetadata('onlyBoundOrder', true);
+export const OnlyBoundOrder = () => SetMetadata('onlyBoundOrder', true);

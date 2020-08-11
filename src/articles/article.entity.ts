@@ -1,5 +1,5 @@
 import { Column, Entity, Index, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
-import { Field, ObjectType } from 'type-graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Tag } from '../tags/tag.entity';
 import { AppBaseEntity } from '../common/entities/app-base-entity';
 import { Account } from '../accounts/account.entity';
@@ -22,11 +22,11 @@ export class Article extends AppBaseEntity {
   summary: string;
 
   @Field()
-  @Column({ type: 'mediumtext', comment: '文章正文（MD）', nullable: true })
+  @Column({ type: 'text', comment: '文章正文（MD）', nullable: true })
   mdContent: string;
 
   @Field()
-  @Column({ type: 'mediumtext', comment: '文章正文（HTML）' })
+  @Column({ type: 'text', comment: '文章正文（HTML）' })
   htmlContent: string;
 
   @Field(type => [Tag])
@@ -38,7 +38,7 @@ export class Article extends AppBaseEntity {
   @ManyToOne(type => Account, account => account.articles)
   author: Account;
 
-  @Field()
+  @Field(type => Int)
   @Column()
   authorId: number;
 
@@ -49,6 +49,7 @@ export class Article extends AppBaseEntity {
   @Column({ default: false, select: false })
   isDelete: boolean;
 
+  @Field()
   @Column({ default: true })
   isPublic: boolean;
 }

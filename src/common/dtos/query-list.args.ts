@@ -1,5 +1,6 @@
-import { ArgsType, Field, Int } from 'type-graphql';
-import { IsOptional, IsPositive } from 'class-validator';
+import { ArgsType, Field, Int } from '@nestjs/graphql';
+import { IsOptional, IsPositive, IsIn } from 'class-validator';
+import { OrderByCondition } from 'typeorm';
 
 @ArgsType()
 export class QueryListArgs {
@@ -12,4 +13,9 @@ export class QueryListArgs {
   @IsOptional()
   @IsPositive()
   pageSize: number = 10;
+
+  @Field(type => String, {nullable: true})
+  @IsOptional()
+  @IsIn(['DESC', 'ASC'])
+  createdAtOrderBy?: OrderByCondition;
 }

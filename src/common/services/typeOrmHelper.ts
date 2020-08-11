@@ -1,5 +1,5 @@
 import { SelectQueryBuilder } from 'typeorm';
-import * as moment from 'moment';
+import moment from 'moment';
 
 interface PaginationInterface {
   pageSize?: number;
@@ -142,6 +142,10 @@ export class TypeOrmHelper<Entity extends object> {
 
   static filterEqual<T>(qb: SelectQueryBuilder<T>, alias: string, field: string, params: { [field: string]: any }) {
     params[field] !== undefined && qb.andWhere(`${alias}.${field} = :${field}`, params);
+  }
+
+  static sortResults<T>(qb: SelectQueryBuilder<T>, alias: string, field: string, params: { [field: string]: any }) {
+    params[`${field}OrderBy`] !== undefined && qb.addOrderBy(`${alias}.${field}`, params[`${field}OrderBy`]);
   }
 
   static filterLike<T, Conditions>(

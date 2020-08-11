@@ -1,4 +1,4 @@
-import { Field, InputType } from 'type-graphql';
+import { Field, InputType } from '@nestjs/graphql';
 import { Length } from 'class-validator';
 import { DeepPartial } from 'typeorm';
 import { Account } from '../account.entity';

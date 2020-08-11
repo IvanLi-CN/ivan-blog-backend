@@ -1,4 +1,4 @@
-import { Field, ID, InputType, Int } from 'type-graphql';
+import { Field, ID, InputType, Int } from '@nestjs/graphql';
 import { IsInt, IsOptional, IsDate, Length, MaxLength, IsArray, ArrayMinSize, IsPositive, ArrayMaxSize, Min } from 'class-validator';
 import { ToInt } from '@neuralegion/class-sanitizer/dist';
 

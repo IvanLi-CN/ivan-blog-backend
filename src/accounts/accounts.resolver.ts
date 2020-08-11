@@ -4,7 +4,7 @@ import { AccountsService } from './accounts.service';
 import { UpdateAccountInput } from './dtos/update-account.input';
 import { RegisterAccountInput } from './dtos/register-account.input';
 import { QueryAccountsArgs } from './dtos/query-accounts.args';
-import { Int } from 'type-graphql';
+import { Int } from '@nestjs/graphql';
 import { ForbiddenException, UseGuards } from '@nestjs/common';
 import { AccountGuard } from '../core/auth/guards/account.guard';
 import { Roles } from '../core/auth/decorators/roles.decorator';

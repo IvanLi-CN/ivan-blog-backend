@@ -12,11 +12,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     delete tmp.message;
     const responseData = exception.getResponse();
     let message: string;
-    if (responseData instanceof String) {
-      message = exception.message;
-    } else {
-      message = exception.message.message || exception.message.msg;
-    }
-    return new ApolloError(message, exception.getStatus().toString(), Object.assign(tmp, exception.message));
+    message = exception.message;
+    return new ApolloError(message, exception.getStatus().toString(), Object.assign(tmp, exception));
   }
 }
