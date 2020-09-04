@@ -54,7 +54,7 @@
     "apollo-server-errors": "^2.3.4",
     "concurrently": "^4.1.0",
     "jest": "^23.6.0",
-    "marked": "^0.6.2",
+    "marked": "^0.7.0",
     "nodemon": "^1.18.9",
     "prettier": "^1.15.3",
     "supertest": "^3.4.1",
