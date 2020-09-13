@@ -5,13 +5,14 @@ import { CommonModule } from '../common/common.module';
 import { Account } from './account.entity';
 import { AccountsResolver } from './accounts.resolver';
 import { AccountsService } from './accounts.service';
+import { InitAccountsService } from './init-accounts.service';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Article, Account]),
     CommonModule,
   ],
-  providers: [AccountsResolver, AccountsService],
+  providers: [AccountsResolver, AccountsService, InitAccountsService],
   exports: [AccountsService],
 })
 export class AccountsModule {

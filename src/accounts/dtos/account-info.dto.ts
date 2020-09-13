@@ -4,7 +4,7 @@ import { SystemRoles } from '../../core/auth/account-types.enum';
 @ObjectType()
 export class AccountInfoDto {
   @Field()
-  id: number;
+  id: string;
   @Field()
   account: string;
   @Field()

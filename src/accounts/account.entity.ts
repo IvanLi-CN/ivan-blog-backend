@@ -9,15 +9,15 @@ import { AppBaseEntity } from '../common/entities/app-base-entity';
 export class Account extends AppBaseEntity {
   @Field()
   @Index({ unique: true })
-  @Column({ type: 'char', length: 32, comment: '账号' })
+  @Column({ type: 'varchar', length: 32, comment: '账号' })
   account: string;
 
   @Field()
   @Index()
-  @Column({ type: 'char', length: 32, comment: '昵称' })
+  @Column({ type: 'varchar', length: 32, comment: '昵称' })
   nick: string;
 
-  @Column({ type: 'char', length: 128, comment: '密码', select: false })
+  @Column({ type: 'varchar', length: 128, comment: '密码', select: false })
   password: string;
 
   @Column({ default: false, select: false })

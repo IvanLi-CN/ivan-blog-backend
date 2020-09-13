@@ -5,7 +5,7 @@ import { CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from 'type
 export class AppBaseEntity {
   @Field(type => ID)
   @PrimaryGeneratedColumn()
-  id: number;
+  id: string;
 
   @Field()
   @CreateDateColumn()

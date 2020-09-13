@@ -17,7 +17,7 @@ export class BaseDbService<Entity extends {}> extends TypeOrmHelper<Entity> {
   }
 
   async isDuplicateEntityForUpdate<Dto = { [p: string]: any }>(
-    repository: Repository<Entity>, id: number, dto: Dto, fields?: Array<keyof Dto & string>,
+    repository: Repository<Entity>, id: string, dto: Dto, fields?: Array<keyof Dto & string>,
   ): Promise<false | never> {
     const qb = repository.createQueryBuilder('entity');
     const compareFields = BaseDbService.getCompareFields(dto, fields);

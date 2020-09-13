@@ -6,13 +6,14 @@ import { BaseDbService } from '../common/services/base-db.service';
 import { UpdateAccountInput } from './dtos/update-account.input';
 import { RegisterAccountInput } from './dtos/register-account.input';
 import { QueryAccountsArgs } from './dtos/query-accounts.args';
-import * as bcrypt from 'bcrypt';
+import { PasswordConverter } from '../common/services/password-converter';
 
 @Injectable()
 export class AccountsService extends BaseDbService<Account> {
   constructor(
     @InjectRepository(Account)
     private readonly accountRepository: Repository<Account>,
+    private readonly passwordConverter: PasswordConverter,
   ) {
     super();
   }
@@ -24,20 +25,20 @@ export class AccountsService extends BaseDbService<Account> {
     return await accountRepository.save(
       accountRepository.create({
         ...input,
-        password: await bcrypt.hash(input.password, await bcrypt.genSalt()),
+        password: await this.passwordConverter.convertToStore(input.password),
       }),
     );
   }
 
   @Transaction()
-  async update(id: number, input: UpdateAccountInput, @TransactionManager() manager?: EntityManager) {
+  async update(id: string, input: UpdateAccountInput, @TransactionManager() manager?: EntityManager) {
     const accountRepository = manager.getRepository(Account);
     const old = await accountRepository.findOneOrFail({ id });
     await this.isDuplicateEntityForUpdate(accountRepository, id, input, ['account', 'nick']);
     return await accountRepository.save(
       accountRepository.merge(old, {
         ...input,
-        password: await bcrypt.hash(input.password, await bcrypt.genSalt()),
+        password: await this.passwordConverter.convertToStore(input.password),
       }),
     );
   }
@@ -73,7 +74,7 @@ export class AccountsService extends BaseDbService<Account> {
     const user = await this.accountRepository.findOne({account}, {
       select: ['id', 'password', 'account', 'nick', 'systemRole'],
     });
-    if (!user || !user.password || !await bcrypt.compare(password, Buffer.from(user.password).toString())) {
+    if (!user || !user.password || !await this.passwordConverter.compare(password, Buffer.from(user.password).toString())) {
       throw new BadRequestException('账号或密码错误！');
     }
     const tmp = { ...user };
@@ -81,7 +82,7 @@ export class AccountsService extends BaseDbService<Account> {
     return tmp;
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     return await this.accountRepository.findOne({id}, {
       select: ['id', 'account', 'nick', 'systemRole'],
     });

@@ -25,7 +25,7 @@ export class AccountsResolver {
   @Roles(SystemRoles.admin)
   @Query(returns => [Account])
   async account(
-    @Args({name: 'id', type: () => Int}) id: number,
+    @Args({name: 'id', type: () => Int}) id: string,
   ): Promise<Account> {
     return await this.accountsService.findOne(id);
   }
@@ -55,7 +55,7 @@ export class AccountsResolver {
   @Mutation(returns => Account)
   async updateAccount(
     @Args('updateAccountInput') input: UpdateAccountInput,
-    @Args('id') id: number,
+    @Args('id') id: string,
     @CurrentUser() user: AccountJwtInfoDto,
     ): Promise<Account> {
     if (user.systemRole !== SystemRoles.admin && user.id !== id) {
@@ -67,8 +67,8 @@ export class AccountsResolver {
   @Roles(SystemRoles.admin)
   @Mutation(returns => Boolean)
   async removeAccount(
-    @Args({name: 'id', type: () => Int, nullable: true}) id?: number,
-    @Args({name: 'ids', type: () => [Int], nullable: true}) ids?: number[],
+    @Args({name: 'id', type: () => Int, nullable: true}) id?: string,
+    @Args({name: 'ids', type: () => [Int], nullable: true}) ids?: string[],
     ): Promise<true> {
     const tmpIds = [];
     Array.isArray(ids) && tmpIds.push(...tmpIds);

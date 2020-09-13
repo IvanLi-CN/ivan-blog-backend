@@ -1,7 +1,7 @@
 import { SystemRoles } from '../account-types.enum';
 
 export class AccountJwtInfoDto {
-  id: number;
+  id: string;
   systemRole: SystemRoles;
   // permissions: UserPermissions[];
 }
